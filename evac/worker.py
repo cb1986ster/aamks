@@ -321,6 +321,7 @@ class Worker:
         report['psql'] = dict()
         report['psql']['fed'] = dict()
         report['psql']['rset'] = dict()
+        report['psql']['i_risk'] = dict()
         report['psql']['runtime'] = int(time.time() - self.start_time)
         report['psql']['cross_building_results'] = self.cross_building_results
         for i in self.floors:
