@@ -32,6 +32,7 @@ class processDists:
         self.t_k = 0
         self.total = 0
         self.dead = 0
+        self.dcbe = []
         self.dir = sys.argv[1]
         self.configs = self._get_json('{}/conf.json'.format(self.dir))
         self.p = Psql()
@@ -149,6 +150,9 @@ class processDists:
                 fed.append(collections.Counter(np.array(values)))
 
         for item in fed:
+            if ('H' in item) or ('M' in item) or ('L' in item):
+                self.dcbe.append(1)
+
             for key in item.keys():
                 if key == 'H':
                     losses['dead'].append(item[key])
@@ -184,6 +188,16 @@ class processDists:
         fig.tight_layout()
         fig.savefig('{}/picts/ccdf.png'.format(self.dir))
         fig.clf()
+
+    def calculate_indidual_risk(self):
+        query = "SELECT i_risk FROM simulations where project = {} AND scenario_id = {} AND dcbe_time is not null AND i_risk is not null".format(self.configs['project_id'], self.configs['scenario_id'])
+        results = self.p.query(query)
+        row = [json.loads(i[0]) for i in results]
+        risk=list()
+        for i in row:
+            for values in i.values():
+                risk.append(values)
+        return sum(risk)/len(risk)
 
     def plot_ccdf_percentage(self):
 
@@ -335,11 +349,11 @@ print(p.calculate_building_area())
 #if p.losses_num[4] == 0:
 #    p.losses_num[4] = 1e-12
 
-fed_f = float('%.3f' % (len(p.losses['dead'])/p.total))
+fed_f = float('%.3f' % (p.calculate_indidual_risk()))
 fed_m = float('%.3f' % (len(p.losses['heavy'])/p.total))
 fed_l = float('%.3f' % (len(p.losses['light'])/p.total))
 fed_n = float('%.3f' % (len(p.losses['neglegible'])/p.total))
-t_kryt = float('%.3f' % ((len(p.losses['dead']))/p.total))
+p_dcbe = float('%.3f' % (len(p.dcbe)/p.total))
 p_ext = float('%.3f' % 0.17)
 p_tk = float('%.3f' % (p.t_k/p.total))
 
@@ -354,15 +368,17 @@ with open('{}/picts/dane.txt'.format(p.dir), 'w') as g:
     g.write("MIN_VISIBILITY - PER: {}, MEAN: {}".format(min_vis[0], min_vis[1]))
     temp_val = p.temp_values()
     g.write("MAX_TEMP - PER: {}, MEAN: {}".format(temp_val[0], temp_val[1]))
-    g.write('P_dcbe: {}'.format(t_kryt*bar*p_ext))
+    g.write('P_dcbe: {}'.format(p_dcbe*bar*p_ext))
     g.write('DEAD RATIO: {}'.format(sum(p.losses['dead'])/p.total))
     g.write('DEAD FACTOR: {}'.format(sum(p.losses['dead'])/len(p.losses['dead'])))
     g.write('HEAVY FACTOR: {}'.format(sum(p.losses['heavy'])/len(p.losses['heavy'])))
     print('DEAD FACTOR: {}'.format(sum(p.losses['dead'])/len(p.losses['dead'])))
     print('HEAVY FACTOR: {}'.format(sum(p.losses['heavy'])/len(p.losses['heavy'])))
+    print('P_DCBE: {}'.format(len(p.dcbe)/p.total))
+    print('P_FED_F: {}'.format(fed_f))
 
 
-t = EventTreeFED(building=p.dir, p_general=bar, p_develop=p_ext, p_dcbe=t_kryt, p_fed_n=fed_n, p_fed_l=fed_l, p_fed_m=fed_m, p_fed_f=fed_f)
+t = EventTreeFED(building=p.dir, p_general=bar, p_develop=p_ext, p_dcbe=p_dcbe, p_fed_n=fed_n, p_fed_l=fed_l, p_fed_m=fed_m, p_fed_f=fed_f)
 t.draw_tree()
 
 s = EventTreeSteel(building=p.dir, p_general=bar, p_develop=p_ext, p_Tk=p_tk, p_time_less=0.001)
