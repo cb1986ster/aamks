@@ -39,7 +39,7 @@ class processDists:
         if os.path.exists('{}/picts'.format(self.dir)):
             shutil.rmtree('{}/picts'.format(self.dir))
         os.makedirs('{}/picts'.format(self.dir))
-        self.horisontal_time=dict({'0': 3, '1': 36, '2': 72, '3': 112})
+        self.horisontal_time=dict({'0': 3, '1': 36, '2': 72, '3': 112, '4': 148, '5': 184, '6': 220})
 
     def plot_dcbe_dist(self):
 #        plt.clf()
@@ -146,8 +146,12 @@ class processDists:
         row = [json.loads(i[0]) for i in results]
         fed=list()
         for i in row:
-            for values in i.values():
-                fed.append(collections.Counter(np.array(values)))
+            temp_list = list()
+            for key, values in i.items():
+                temp_list = temp_list + values
+                #print("KEY: {}, VALUE: {}\n".format(key, values))
+            print(temp_list)
+            fed.append(collections.Counter(np.array(temp_list)))
 
         for item in fed:
             if ('H' in item) or ('M' in item) or ('L' in item):
