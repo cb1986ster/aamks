@@ -220,7 +220,8 @@ class processDists:
         return sum(risk)/len(risk)
 
     def plot_risk_convergence(self, init_risk):
-        fig = plt.figure(figsize=(10, 3))
+        #fig = plt.figure(figsize=(10, 3))
+        fig = plt.figure()
         ax = plt.axes()
 
         avg_risk = list(np.array(self.avg_risk)*init_risk)
