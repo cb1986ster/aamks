@@ -421,7 +421,9 @@ with open('{}/picts/dane.txt'.format(p.dir), 'w') as g:
     print('P_FED_F: {}'.format(fed_f))
 
 
-t = EventTreeFED(building=p.dir, p_general=bar, p_develop=p_ext, p_dcbe=p_dcbe, p_fed_n=fed_n, p_fed_l=fed_l, p_fed_m=fed_m, p_fed_f=fed_f)
+t = EventTreeFED(building=p.dir, p_general=bar, p_develop=p_ext, p_dcbe=p_dcbe, p_fed_n=fed_n, p_fed_l=fed_l, p_fed_m=fed_m, p_fed_f=fed_f, mode='F')
+t.draw_tree()
+t = EventTreeFED(building=p.dir, p_general=bar, p_develop=p_ext, p_dcbe=p_dcbe, p_fed_n=fed_n, p_fed_l=fed_l, p_fed_m=fed_m, p_fed_f=fed_f, mode='M')
 t.draw_tree()
 
 s = EventTreeSteel(building=p.dir, p_general=bar, p_develop=p_ext, p_Tk=p_tk, p_time_less=0.001)
