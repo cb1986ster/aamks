@@ -171,6 +171,7 @@ class CfastMcarlo():
 
         self._psql_log_variable('hrrpeak', hrr_peak/1000)
         self._psql_log_variable('alpha', self.alpha/1000.0)
+        self._psql_log_variable('area', fire_area)
 
         # left
         t_up_to_hrr_peak = int((hrr_peak/self.alpha)**0.5)

@@ -99,16 +99,16 @@ class EventTreeFED:
         #ax.text(3.5, -0.165, 'FED = [0.3, 1)')
         #ax.text(3.5, -0.235, fed[2])
 
-        fed = [[3.3, 4.4], [-0.325, -0.325], 'P = {}'.format(fed)]
-        ax.plot(fed[0], fed[1], linewidth=2, color='b')
+        fed_i = [[3.3, 4.4], [-0.325, -0.325], 'P = {}'.format(fed)]
+        ax.plot(fed_i[0], fed_i[1], linewidth=2, color='b')
         ax.text(3.5, -0.305, 'YES')
-        ax.text(3.5, -0.375, fed[2])
+        ax.text(3.5, -0.375, fed_i[2])
 
         ax.plot([3.3, 6.5], [-0.5, -0.5], linewidth=0.1, color='white')
 
         c = patches.Ellipse(xy=(0.671, 0.159), width=0.02, height=0.04, fill=True, transform=ax.transAxes, clip_on=False, color='b')
         ax.add_patch(c)
-        p1 = float(self.p_general) * self.p_develop * self.p_dcbe * self.p_fed_f
+        p1 = float(self.p_general) * self.p_develop * self.p_dcbe * fed
         ax.text(4.65, -0.335, r'$P_4 =  %.2E$' % Decimal(p1))
 
         c = patches.Ellipse(xy=(0.671, 0.442), width=0.02, height=0.04, fill=True, transform=ax.transAxes, clip_on=False, color='g')
@@ -227,3 +227,7 @@ class EventTreeSteel:
         ax.text(4.65, 0.094, r'$P_6 =  %.2E; S_6 = L$' % Decimal(p))
 
         fig.savefig('{}/picts/tree_steel.png'.format(self.building))
+    
+    
+#p = EventTreeFED(building='/home/aamks_users/akrasuski@sgsp.edu.pl/p2/c1', p_general=6.52e-3, p_develop=0.17, p_dcbe=0.484, p_fed_n=1.2, p_fed_l = 0, p_fed_m=0.1, p_fed_f=0.484, mode='F')
+#p.draw_tree()
