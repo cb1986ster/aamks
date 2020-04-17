@@ -98,13 +98,14 @@ class processDists:
     def plot_run_time(self, scenario_list):# {{{
         n=1
         for proj in scenario_list:
-            query = "SELECT run_time FROM simulations where project = {} AND scenario_id = {} \
-            AND dcbe_time is not null".format(self.configs['project_id'], proj)
+            query = "SELECT run_time/60 FROM simulations where project = {} AND scenario_id = {} \
+            AND dcbe_time is not null and run_time< 10000".format(self.configs['project_id'], proj)
 
             results = self.p.query(query)
             dcbe = [int(i[0]) for i in results]
-            sns_plot = sns.distplot(dcbe, kde_kws={'cumulative': True, 'label': 'Runtime CDF CD{}'.format(n)}, bins=50)
+            sns_plot = sns.distplot(dcbe, kde_kws={'cumulative': True, 'label': 'CDF CD{}'.format(n)}, bins=50)
             n+=1
+        sns_plot.set(xlabel='Run-time [min]', ylabel='Probability [-]')
         fig = sns_plot.get_figure()
         fig.savefig("{}/../picts/runtime.png".format(self.dir))
         plt.clf()
@@ -255,6 +256,7 @@ p.plot_wcbe_dist(scenario_list=s_list)
 p.plot_min_height_cor(scenario_list=s_list)
 p.plot_min_vis_cor(scenario_list=s_list)
 p.plot_max_temp(scenario_list=s_list)
+p.plot_run_time(scenario_list=s_list)
 p.calculate_ccdf(scenario_list=s_list)
 p.plot_pie_fault()
 
